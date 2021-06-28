@@ -4,14 +4,20 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
+var defaultStyle *ModalStyleOpts
+
 // ModalForm implements a modal window with a custom form.
 type ModalForm struct {
 	*Modal
 }
 
+func SetModalStyle(opts *ModalStyleOpts) {
+	defaultStyle = opts
+}
+
 // NewModalForm implements a modal that can take in a custom form.
 func NewModalForm(title string, form *Form) *ModalForm {
-	m := ModalForm{NewModal()}
+	m := ModalForm{Modal: NewModal()}
 	m.form = form
 	m.form.SetBackgroundColor(Styles.ContrastBackgroundColor).SetBorderPadding(0, 0, 0, 0)
 	m.form.SetCancelFunc(func() {
@@ -30,8 +36,53 @@ func NewModalForm(title string, form *Form) *ModalForm {
 	return &m
 }
 
-// Draw draws this primitive onto the screen.
+func (m *ModalForm) setStyle(style *ModalStyleOpts) {
+
+	// Make sure to set both the frame and the form. I don't think we need
+	// to differentiate between the two as it almost always looks awkward if you
+	// do.
+	m.frame.SetBackgroundColor(style.BgColor)
+	m.form.SetBackgroundColor(style.BgColor)
+	// If transparent set to the color of the form bg
+	if style.FieldBgColor == ColorTransparent {
+		m.form.SetFieldBackgroundColor(style.BgColor)
+	} else {
+		m.form.SetFieldBackgroundColor(style.FieldBgColor)
+	}
+
+	m.form.SetFieldTextColor(style.FieldFgColor)
+	m.form.SetTitleColor(style.TitleFgColor)
+	m.form.SetLabelColor(style.LabelFgColor)
+
+	setButtonStyle(m.form, style)
+}
+
+// SetButtonStyle takes a Forma and a dialog config and ensures sure all buttons
+// in the form have the same look and feel, via the theme engine.
+func setButtonStyle(f *Form, style *ModalStyleOpts) {
+	for i := 0; i < f.GetButtonCount(); i++ {
+		b := f.GetButton(i)
+		if b == nil {
+			continue
+		}
+		b.SetBackgroundColor(style.ButtonBgColor)
+		b.SetLabelColor(style.ButtonFgColor)
+		b.SetBackgroundColorActivated(style.ButtonFocusBgColor)
+		b.SetLabelColorActivated(style.ButtonFocusFgColor)
+	}
+}
+
+// Draw draws a modal styled with the default style
 func (m *ModalForm) Draw(screen tcell.Screen) {
+	m.DrawWithStyle(defaultStyle, screen)
+}
+
+// DrawWithStyle draws a modal with a custom style. This is useful for error
+// dialogs or other places where the default style is not acceptable.
+func (m *ModalForm) DrawWithStyle(style *ModalStyleOpts, screen tcell.Screen) {
+	if style != nil {
+		m.setStyle(style)
+	}
 	// Calculate the width of this modal.
 	buttonsWidth := 0
 	for _, button := range m.form.buttons {
