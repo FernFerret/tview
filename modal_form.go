@@ -30,6 +30,16 @@ func NewModalForm(title string, form *Form) *ModalForm {
 	return &m
 }
 
+// Form returns the internal form object associated with this ModalForm.
+func (m *ModalForm) Form() *Form {
+	return m.form
+}
+
+// Form returns the internal frame object associated with this ModalForm.
+func (m *ModalForm) Frame() *Frame {
+	return m.frame
+}
+
 // Draw draws this primitive onto the screen.
 func (m *ModalForm) Draw(screen tcell.Screen) {
 	// Calculate the width of this modal.
