@@ -17,7 +17,7 @@ func SetModalStyle(opts *ModalStyleOpts) {
 
 // NewModalForm implements a modal that can take in a custom form.
 func NewModalForm(title string, form *Form) *ModalForm {
-	m := ModalForm{Modal: NewModal()}
+	m := ModalForm{NewModal()}
 	m.form = form
 	m.form.SetBackgroundColor(Styles.ContrastBackgroundColor).SetBorderPadding(0, 0, 0, 0)
 	m.form.SetCancelFunc(func() {
