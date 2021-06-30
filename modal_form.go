@@ -44,7 +44,7 @@ func (m *ModalForm) setStyle(style *ModalStyleOpts) {
 	m.frame.SetBackgroundColor(style.BgColor)
 	m.form.SetBackgroundColor(style.BgColor)
 	// If transparent set to the color of the form bg
-	if style.FieldBgColor == ColorTransparent {
+	if style.FieldBgColor == tcell.ColorDefault {
 		m.form.SetFieldBackgroundColor(style.BgColor)
 	} else {
 		m.form.SetFieldBackgroundColor(style.FieldBgColor)

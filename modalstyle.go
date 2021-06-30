@@ -2,12 +2,6 @@ package tview
 
 import "github.com/gdamore/tcell/v2"
 
-const (
-	// ColorTransparent is used to indicate that a color is transparent and a
-	// parent or default should be rendered instead.
-	ColorTransparent = tcell.ColorSpecial | iota
-)
-
 // ModalStyleOpts contains options for styling a ModalForm.
 type ModalStyleOpts struct {
 	// FgColor is the text (foreground) color of the primary modal text.
